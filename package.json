@@ -1,0 +1,14 @@
+{
+  "name": "t03-js",
+  "version": "1.0.0",
+  "description": "DICE 2016 programming challange game",
+  "main": "index.js",
+  "scripts": {
+	  "watch1": "echo 'waht'"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Klava <anton@klava.se>",
+  "license": "MIT"
+}
