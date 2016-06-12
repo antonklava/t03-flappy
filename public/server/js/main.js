@@ -23,7 +23,8 @@ const game = new Phaser.Game(width, height, Phaser.AUTO, '', {
 	create: function create() {
 		game.stage.disableVisibilityChange = true;
 		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.add.sprite(0, 0, 'bg3');
+		const bg = game.add.sprite(0, 0, 'bg3');
+		bg.scale.setTo(height/bg.height);
 		spawner = new ObstacleSpawner(game);
 		objects.push(spawner);
 
