@@ -40,6 +40,8 @@ function Obstacle(game) {
 	};
 
 	self.update = function() {
+		// game.debug.body(self.obstacle_lower);
+		// game.debug.body(self.obstacle_upper);
 		self.set_position(self.position + game.time.elapsed*self.speed);
 	};
 

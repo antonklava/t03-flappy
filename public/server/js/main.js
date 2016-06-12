@@ -10,6 +10,7 @@ const ObstacleSpawner = require('./obstacle.js');
 const objects = [];
 let spawner;
 
+
 const game = new Phaser.Game(width, height, Phaser.AUTO, '', {
 	preload: function preload() {
 		game.load.image('bg1', '/assets/background/city.png');
@@ -20,13 +21,37 @@ const game = new Phaser.Game(width, height, Phaser.AUTO, '', {
 		game.load.image('obstacle', '/assets/obstacle.png');
 	},
 	create: function create() {
+		game.stage.disableVisibilityChange = true;
 		game.physics.startSystem(Phaser.Physics.ARCADE);
-		game.add.sprite(0, 0, 'bg1');
-		const bird = new Bird(game);
-		objects.push(bird);
+		game.add.sprite(0, 0, 'bg3');
 		spawner = new ObstacleSpawner(game);
-		bird.colliders = spawner.group;
 		objects.push(spawner);
+
+		const ws = new WebSocket("ws://localhost:8080/server");
+		let birds = {}
+		ws.onopen = function() {
+			console.log("Connected");
+		};
+		ws.onmessage =function(ev){
+			const {client_id, message} = JSON.parse(ev.data);
+			console.log(client_id, message);
+			if (!birds.hasOwnProperty(client_id)) {
+				birds[client_id] = new Bird(game);
+				birds[client_id].colliders = spawner.group;
+				objects.push(birds[client_id]);
+			}
+			if (message === 'retry') {
+				birds[client_id].destroy();
+				delete birds[client_id];
+				birds[client_id] = new Bird(game);
+				objects.push(birds[client_id]);
+				birds[client_id].colliders = spawner.group;
+			} else if (message === 'right') {
+				birds[client_id].right();
+			} else if (message === 'left') {
+				birds[client_id].left();
+			}
+		};
 	},
 	update: function update() {
 		for (let obj of objects) {

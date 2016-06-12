@@ -1,7 +1,7 @@
 const {width, height} = require('./const.js');
 
-const c_horizontal = 40;
-const c_vertical = 150;
+const c_horizontal = 400;
+const c_vertical = 1000;
 
 module.exports = function Bird(game) {
 	const self = this;
@@ -15,12 +15,12 @@ module.exports = function Bird(game) {
 	this.facing_right = true;
 
 	this.bird = game.add.sprite(width*0.5, height*0.5, 'bird');
-	game.physics.enable(this.bird, Phaser.Physics.ARCADE);
-	this.bird.scale.setTo(this.scale);
-	this.bird.body.gravity.set(0, 250);
+	game.physics.arcade.enable(this.bird);
+	this.bird.anchor.setTo(0.5, 0.5);
+	this.bird.scale.setTo(this.scale, this.scale);
+	this.bird.body.gravity.set(0, 3000);
 	this.bird_flap = this.bird.animations.add('flap');
 	this.bird.animations.play('flap', this.flap_speed);
-	this.bird.anchor.setTo(0.5, 0.5);
 
 	this.die = function() {
 		self.bird_flap.stop();
@@ -34,12 +34,18 @@ module.exports = function Bird(game) {
 		if ((self.bird.x < 0 ||
 			 self.bird.y > height ||
 			 self.bird.x > width) && self.dies === false) {
-			self.die();
+			self.destroy();
 		}
 		if (self.colliders && self.dies === false) {
 			game.physics.arcade.collide(self.bird, self.colliders, self.die);
 		}
+		// game.debug.body(self.bird);
 	}
+
+	this.destroy = function() {
+		self.die();
+		self.bird.destroy();
+	};
 
 	const space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	space.onDown.add(function() {
@@ -47,41 +53,24 @@ module.exports = function Bird(game) {
 		self.die();
 	});
 
-	const right = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	right.onDown.add(function() {
+	const flap = function(x, y) {
 		if (self.dies) { return; }
 		self.bird_flap.restart();
 		self.bird.animations.play('flap', self.flap_speed);
-		self.bird.scale.setTo(self.scale, self.scale);
-		self.bird.body.offset.x = 0;
-		self.facing_right = true;
-		self.bird.y -= c_vertical;
-		self.bird.x += c_horizontal;
-		self.bird.body.velocity.x = c_horizontal;
-		self.bird.body.acceleration.x = c_horizontal;
-		self.bird.body.velocity.y = c_vertical;
-		self.bird.body.acceleration.y = c_vertical;
-	});
 
-	const left = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-	left.onDown.add(function() {
-		if (self.dies) { return; }
-		self.bird_flap.restart();
-		self.bird.animations.play('flap', self.flap_speed);
-		if (self.facing_right) {
-			self.facing_right = false;
-			self.bird.scale.x *= -1;
-			self.bird.body.offset.x = self.bird.width;
-		}
-		self.bird.y -= c_vertical;
-		self.bird.x -= c_horizontal;
-		self.bird.body.velocity.x = -c_horizontal;
-		self.bird.body.acceleration.x = -c_horizontal;
-		self.bird.body.velocity.y = c_vertical;
-		self.bird.body.acceleration.y = c_vertical;
-	});
+		self.bird.body.velocity.x = x*c_horizontal;
+		self.bird.body.velocity.y = y*c_vertical;
+		self.bird.body.acceleration.y = 0;
+		self.bird.body.acceleration.x = 0;
+	};
 
-	game.input.keyboard.addKeyCapture([Phaser.Keyboard.RIGHT, Phaser.Keyboard.LEFT])
+	this.right = function() {
+		flap(0.25, -0.75);
+	};
+
+	this.left = function() {
+		flap(-0.25, -0.75);
+	};
 
 	return this;
 }
