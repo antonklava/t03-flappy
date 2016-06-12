@@ -3,6 +3,8 @@
 Basic multiplayer flappy birds created during a 5 hour hackaton/challange.
 Created using [phaser](http://phaser.io/) (first time using).
 
+![Screenshot with game + controller](screenshot.jpg)
+
 The websocket latency makes it kinda unplayable so I've decided not to take it
 any further.
 
