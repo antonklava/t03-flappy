@@ -1,7 +1,7 @@
 
 const $ = require('jquery');
 
-const ws = new WebSocket("ws://192.168.43.9:8080/client");
+const ws = new WebSocket("ws://192.168.1.187:8080/client");
 let id = null;
 
 ws.onopen = function(ev) {

@@ -5,24 +5,31 @@ const c_vertical = 1000;
 
 module.exports = function Bird(game) {
 	const self = this;
-	this.scale = 0.8;
-	this.flap_speed = 5;
-	this.width = 128;
-	this.height = 128;
-	this.colliders = null;
-	this.game = game;
-	this.dies = false;
-	this.facing_right = true;
+	self.scale = 0.5;
+	self.flap_speed = 5;
+	self.width = 128;
+	self.height = 128;
+	self.colliders = null;
+	self.game = game;
+	self.dies = false;
+	self.facing_right = true;
+	self.start_x = width*0.5;
+	self.start_y = height*0.5;
 
-	this.bird = game.add.sprite(width*0.5, height*0.5, 'bird');
-	game.physics.arcade.enable(this.bird);
-	this.bird.anchor.setTo(0.5, 0.5);
-	this.bird.scale.setTo(this.scale, this.scale);
-	this.bird.body.gravity.set(0, 3000);
-	this.bird_flap = this.bird.animations.add('flap');
-	this.bird.animations.play('flap', this.flap_speed);
+	self.bird = game.add.sprite(0, 0, 'bird');
+	self.bird.anchor.setTo(0.5, 0.5);
+	self.bird.scale.setTo(self.scale, self.scale);
+	self.bird_flap = self.bird.animations.add('flap');
+	self.bird.animations.play('flap', self.flap_speed);
+	self.hitbox = game.add.sprite(self.start_x, self.start_y);
+	self.hitbox.anchor.setTo(0.5, 0.5);
+	self.hitbox.width = self.width*0.4;
+	self.hitbox.height = self.height*0.4;
+	self.hitbox.addChild(self.bird);
+	game.physics.arcade.enable(self.hitbox);
+	self.hitbox.body.gravity.set(0, 3000);
 
-	this.die = function() {
+	self.die = function() {
 		self.bird_flap.stop();
 		self.bird.angle = 180;
 		self.colliders = null;
@@ -30,19 +37,19 @@ module.exports = function Bird(game) {
 		console.log("Bird daead!");
 	};
 
-	this.update = function() {
+	self.update = function() {
 		if ((self.bird.x < 0 ||
 			 self.bird.y > height ||
 			 self.bird.x > width) && self.dies === false) {
 			self.destroy();
 		}
 		if (self.colliders && self.dies === false) {
-			game.physics.arcade.collide(self.bird, self.colliders, self.die);
+			game.physics.arcade.collide(self.hitbox, self.colliders, self.die);
 		}
-		// game.debug.body(self.bird);
+		// game.debug.body(self.hitbox);
 	}
 
-	this.destroy = function() {
+	self.destroy = function() {
 		self.die();
 		self.bird.destroy();
 	};
@@ -58,17 +65,17 @@ module.exports = function Bird(game) {
 		self.bird_flap.restart();
 		self.bird.animations.play('flap', self.flap_speed);
 
-		self.bird.body.velocity.x = x*c_horizontal;
-		self.bird.body.velocity.y = y*c_vertical;
-		self.bird.body.acceleration.y = 0;
-		self.bird.body.acceleration.x = 0;
+		self.hitbox.body.velocity.x = x*c_horizontal;
+		self.hitbox.body.velocity.y = y*c_vertical;
+		self.hitbox.body.acceleration.y = 0;
+		self.hitbox.body.acceleration.x = 0;
 	};
 
-	this.right = function() {
+	self.right = function() {
 		flap(0.25, -0.75);
 	};
 
-	this.left = function() {
+	self.left = function() {
 		flap(-0.25, -0.75);
 	};
 
