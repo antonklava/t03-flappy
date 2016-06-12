@@ -1,7 +1,7 @@
 # T03-flappy
 
-Basic multiplayer flappy birds created during a 5 hour hackaton/challange.
-Created using [phaser](http://phaser.io/) (first time using).
+Basic multiplayer flappy bird game created during a 5 hour hackathon.
+Created using [phaser](http://phaser.io/).
 
 ![Screenshot with game + controller](screenshot.jpg)
 
